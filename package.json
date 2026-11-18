@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "dsh-compaction-carryover",
   "version": "0.2.0",
   "description": "Keeps skills and subagents in the DeepSeek Harness compaction checkpoint by asking the summarizer to record a Carry-over section.",

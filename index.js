@@ -25,12 +25,18 @@ export const inject = []
 const DEFAULTS = {
   enabled: true,
   sectionTitle: '## Carry-over',
-  extraInstructions: '',
+  extraInstructions: [
+    '- Skills in effect: one bullet `name` — one clause on why its instructions still matter. Omit skills whose work is finished.',
+    '- Subagents: one bullet `id` — its role in one clause and whether it finished, for every subagent whose result is still needed or that can be reused for follow-up work. Omit subagents that are no longer needed.',
+    'Copy skill names and subagent ids exactly; they are used verbatim later. Write "(none)" when a part is empty.',
+  ].join('\n'),
   debug: false,
 }
 
 /**
  * Normalize raw plugin configuration.
+ * An absent `extraInstructions` keeps the shipped guidance; an explicit empty
+ * string removes it, leaving only the section request.
  * @param raw - loader configuration.
  * @returns resolved configuration.
  */
@@ -40,7 +46,9 @@ export function normalizeConfig (raw = {}) {
   return {
     enabled: input.enabled !== false,
     sectionTitle: title,
-    extraInstructions: typeof input.extraInstructions === 'string' ? input.extraInstructions : DEFAULTS.extraInstructions,
+    extraInstructions: input.extraInstructions === undefined
+      ? DEFAULTS.extraInstructions
+      : typeof input.extraInstructions === 'string' ? input.extraInstructions : DEFAULTS.extraInstructions,
     debug: input.debug === true,
   }
 }
@@ -54,13 +62,9 @@ export function carryOverInstruction (config) {
   const lines = [
     '',
     `Additionally, extend the checkpoint with one more section after the last one: ${config.sectionTitle}`,
-    '- Skills in effect: one bullet `name` — one clause on why its instructions still matter. Omit skills whose work is finished.',
-    '- Subagents: one bullet `id` — its role in one clause and whether it finished, for every subagent whose result is still needed or that can be reused for follow-up work. Omit subagents that are no longer needed.',
-    'Copy skill names and subagent ids exactly; they are used verbatim later. Write "(none)" when a part is empty.',
   ]
-  if (config.extraInstructions.trim() !== '') {
-    lines.push('', config.extraInstructions.trim())
-  }
+  const body = config.extraInstructions.trim()
+  if (body !== '') lines.push('', body)
   return lines.join('\n')
 }
 

@@ -52,8 +52,22 @@ Restart DSH after installing.
 |---|---|---|
 | `enabled` | `true` | Turn the plugin on or off. |
 | `sectionTitle` | `## Carry-over` | Heading the checkpoint must contain. |
-| `extraInstructions` | `''` | Additional requirements appended to the instruction. |
+| `extraInstructions` | built-in guidance | What the section must contain. Replaces the built-in text; an empty string keeps only the section request. |
 | `debug` | `false` | Write diagnostics to `~/.dsh/compaction-carryover.log`. |
+
+The built-in guidance asks for the skills still in effect and the subagents
+still worth reusing, with exact names and ids. Replace it when you want
+something else carried over:
+
+```yaml
+config:
+  extraInstructions: |
+    - Open decisions: one bullet per decision the next step depends on.
+    - Files in progress: exact paths currently being edited.
+```
+
+Remove a part you do not need by rewriting the list; an explicit empty string
+requests the heading with no guidance at all.
 
 ## Check it works
 

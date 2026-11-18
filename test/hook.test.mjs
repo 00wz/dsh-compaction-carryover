@@ -97,7 +97,18 @@ function compactionOptions () {
 // configuration
 assert.equal(normalizeConfig({}).sectionTitle, '## Carry-over')
 assert.equal(normalizeConfig({ sectionTitle: '## Carry' }).sectionTitle, '## Carry')
-assert.ok(carryOverInstruction(normalizeConfig({})).includes('## Carry-over'))
-assert.ok(carryOverInstruction(normalizeConfig({ extraInstructions: 'Be terse.' })).includes('Be terse.'))
+
+const shipped = carryOverInstruction(normalizeConfig({}))
+assert.ok(shipped.includes('## Carry-over'))
+assert.ok(shipped.includes('Skills in effect'), 'shipped guidance mentions skills')
+assert.ok(shipped.includes('Subagents'), 'shipped guidance mentions subagents')
+
+const custom = carryOverInstruction(normalizeConfig({ extraInstructions: 'Only list subagents that are still running.' }))
+assert.ok(custom.includes('Only list subagents'))
+assert.ok(!custom.includes('Skills in effect'), 'custom text replaces the shipped guidance')
+
+const empty = carryOverInstruction(normalizeConfig({ extraInstructions: '' }))
+assert.ok(empty.includes('## Carry-over'))
+assert.ok(!empty.includes('Skills in effect'), 'an explicit empty string leaves only the section request')
 
 console.log('OK: compaction instruction extended, other calls untouched, missing section logged')
